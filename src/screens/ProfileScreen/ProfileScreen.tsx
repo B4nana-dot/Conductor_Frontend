@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, Button, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
+import styles from './ProfileScreen.styles'; // Import the styles
 
+type ProfileScreenProps = {
+  // You can define any props here if needed
+};
 
-const ProfileScreen = () => {
-  const [username, setUsername] = useState('Angelic4');
-  const [email, setEmail] = useState('angemendoza@gmail.com');
-  const [password, setPassword] = useState(''); 
-  const [phoneNumber, setPhoneNumber] = useState('0935353535');  
-  const [busName, setBusName] = useState('2032');
-  const [isEditing, setIsEditing] = useState(false);
+const ProfileScreen: React.FC<ProfileScreenProps> = () => {
+  const [username, setUsername] = useState<string>('Username');
+  const [email, setEmail] = useState<string>('Email');
+  const [password, setPassword] = useState<string>(''); 
+  const [phoneNumber, setPhoneNumber] = useState<string>('+63');  
+  const [busName, setBusName] = useState<string>('No.');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const handleSave = () => {
     Alert.alert('Profile Updated', 'Your profile has been successfully updated.');
@@ -73,35 +77,5 @@ const ProfileScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'flex-start', 
-  },
-  profileImage: {
-    width: 100, 
-    height: 100, 
-    borderRadius: 50, 
-    marginBottom: 20, 
-  },
-  label: {
-    marginBottom: 5,
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'left', 
-    width: '100%', 
-  },
-  input: {
-    height: 40,
-    borderColor: 'black',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    width: '100%', 
-  },
-});
 
 export default ProfileScreen;

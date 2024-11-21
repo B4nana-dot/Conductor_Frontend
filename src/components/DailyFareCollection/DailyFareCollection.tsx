@@ -1,10 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, Button } from 'react-native';
+import styles from './DailyFareCollection.styles';
 
-function DailyFareCollection({ route, navigation }) {
+interface Fare {
+  location: string;
+  fare: number;
+}
+
+interface DailyFareCollectionProps {
+  route: {
+    params: {
+      location: string;
+      fare: string;
+      type: 'R' | 'D'; // 'R' for regular, 'D' for discounted
+    };
+  };
+  navigation: {
+    navigate: (screen: string) => void;
+  };
+}
+
+const DailyFareCollection: React.FC<DailyFareCollectionProps> = ({ route, navigation }) => {
   const { location, fare, type } = route.params || {};
 
-  const [fares, setFares] = useState({
+  const [fares, setFares] = useState<{
+    regular: Fare[];
+    discounted: Fare[];
+  }>({
     regular: [],
     discounted: [],
   });
@@ -22,11 +44,11 @@ function DailyFareCollection({ route, navigation }) {
     }
   }, [location, fare, type]);
 
-  const calculateTotal = (fareList) => {
+  const calculateTotal = (fareList: Fare[]): number => {
     return fareList.reduce((total, { fare }) => total + fare, 0);
   };
 
-  const renderFareList = (fareList, fareType) => (
+  const renderFareList = (fareList: Fare[], fareType: 'regular' | 'discounted') => (
     <View style={styles.section}>
       <Text style={styles.sectionHeader}>
         {fareType === 'regular' ? 'Regular Fares' : 'Discounted Fares'}
@@ -49,51 +71,12 @@ function DailyFareCollection({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Daily Fare Collection</Text>
+      <Text style={styles.header}>Fare Collection</Text>
       {renderFareList(fares.regular, 'regular')}
       {renderFareList(fares.discounted, 'discounted')}
-      <Button title="Add New Fare" onPress={() => navigation.navigate('FareAmountForStaMaria')} />
-      
+      <Button title="Add New Fare" onPress={() => navigation.navigate('FareLocation')} />
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  fareRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 5,
-  },
-  locationText: {
-    fontSize: 16,
-  },
-  amountText: {
-    fontSize: 16,
-  },
-  totalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-});
+};
 
 export default DailyFareCollection;

@@ -2,20 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-import LoginScreen from './src/screens/LoginScreen';
-import AdminDashboard from './src/screens/AdminDashboard';
-import ConductorPage from './src/screens/ConductorPage';
-import HomePage from './src/screens/HomePage';
-import ProfileScreen from './src/screens/ProfileScreen';
-import FareLocation from './src/screens/FareLocation';
-import FareAmountForUrdaneta from "./src/screens/FareAmountForUrdaneta";
-import FareAmountForDagupan from "./src/screens/FareAmountForDagupan";
-import FareAmountForStaMaria from "./src/screens/FareAmountForStaMaria";
-import DailyFareCollection from "./src/screens/DailyFareCollection.js";
-import HistoryReceiptScreen from "./src/screens/HistoryReceiptScreen.js";
+import LoginScreen from './src/screens/LoginScreen/LoginScreen.tsx';
+import ConductorPage from './src/components/Conductor/ConductorPage.tsx';
+import ProfileScreen from './src/screens/ProfileScreen/ProfileScreen.tsx'
+import FareLocation from './src/screens/FareLocation/FareLocation.tsx';
+import DailyFareCollection from "./src/components/DailyFareCollection/DailyFareCollection.tsx";
+import HistoryReceiptScreen from "./src/screens/HistoryReceiptScreen/HistoryReceiptScreen.tsx";
 import { ActivityIndicator, View } from 'react-native'; 
 import { ImportsNotUsedAsValues } from 'typescript';
+import FareAmountForLocation from './src/components/FareAmount/FareAmountForLocation.tsx';
 
 const Stack = createStackNavigator();
 
@@ -30,12 +27,8 @@ const App = () => {
         const role = await AsyncStorage.getItem('role');
 
         if (token && role) {
-          if (role === 'admin') {
-            setInitialRoute('AdminDashboard');
-          } else if (role === 'conductor') {
+          if (role === 'conductor') {
             setInitialRoute('ConductorPage');
-          } else {
-            setInitialRoute('HomePage');
           }
         } else {
           setInitialRoute('Login'); 
@@ -64,14 +57,10 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute}>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
         <Stack.Screen name="ConductorPage" component={ConductorPage} />
-        <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="FareLocation" component={FareLocation} />
-        <Stack.Screen name="FareAmountForUrdaneta" component={FareAmountForUrdaneta} />
-        <Stack.Screen name="FareAmountForStaMaria" component={FareAmountForStaMaria} />
-        <Stack.Screen name="FareAmountForDagupan" component={FareAmountForDagupan} />
+        <Stack.Screen name="FareAmountForLocation" component={FareAmountForLocation} />
         <Stack.Screen name="DailyFareCollection" component={DailyFareCollection} />
         <Stack.Screen name="HistoryReceiptScreen" component={HistoryReceiptScreen} />
       </Stack.Navigator>
