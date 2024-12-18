@@ -3,26 +3,27 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface FareItemProps {
     location: string;
-    R: number;
-    D: number;
+    regular_price: number;
+    discounted_price: number;
     onFarePress: (location: string, fare: number, type: string) => void;
+    location_fare: any
 }
 
-const FareItem: React.FC<FareItemProps> = ({ location, R, D, onFarePress }) => {
+const FareItem: React.FC<FareItemProps> = ({ location, regular_price, discounted_price, onFarePress, location_fare }) => {
     return (
         <View style={styles.itemContainer}>
             <Text style={styles.locationText}>{location}</Text>
             <TouchableOpacity
                 style={styles.fareButton}
-                onPress={() => onFarePress(location, R, 'R')}
+                onPress={() => onFarePress(location_fare.fare_location, regular_price, 'regular')}
             >
-                <Text style={styles.buttonText}>R: {R}</Text>
+                <Text style={styles.buttonText}>R: {regular_price}</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.fareButton}
-                onPress={() => onFarePress(location, D, 'D')}
+                onPress={() => onFarePress(location_fare.fare_location, discounted_price, 'discounted')}
             >
-                <Text style={styles.buttonText}>D: {D}</Text>
+                <Text style={styles.buttonText}>D: {discounted_price}</Text>
             </TouchableOpacity>
         </View>
     );

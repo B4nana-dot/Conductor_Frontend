@@ -13,7 +13,7 @@ interface ConductorPageProps {
 
 const ConductorPage: React.FC<ConductorPageProps> = ({ navigation }) => {
   const { user, token, setUser, setToken, notification } = useStateContext();
-  console.log(user);
+  console.log({user: user}); //asdasdasd
   return (
     <View style={styles.container}>
       <Text style={styles.title}>AJOTCO</Text>

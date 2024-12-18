@@ -8,11 +8,14 @@ import LoginScreen from './src/screens/LoginScreen/LoginScreen.tsx';
 import ConductorPage from './src/components/Conductor/ConductorPage.tsx';
 import ProfileScreen from './src/screens/ProfileScreen/ProfileScreen.tsx'
 import FareLocation from './src/screens/FareLocation/FareLocation.tsx';
-import DailyFareCollection from "./src/components/DailyFareCollection/DailyFareCollection.tsx";
+import TotalFareCollection from './src/components/TotalFareCollection/TotalFareCollection.tsx'
+import DailyFareCollection from './src/components/DailyFareCollection/DailyFareCollection.tsx';
 import HistoryReceiptScreen from "./src/screens/HistoryReceiptScreen/HistoryReceiptScreen.tsx";
+import FareDetailScreen from './src/screens/FareDetial/FareDetailScreen.tsx';
 import { ActivityIndicator, View } from 'react-native'; 
 import { ImportsNotUsedAsValues } from 'typescript';
-import FareAmountForLocation from './src/components/FareAmount/FareAmountForLocation.tsx';
+import FareAmountForLocation from './src/screens/FareAmount/FareAmountForLocation.tsx';
+import { ContextProvider } from './src/Context/ContextProvider.tsx'; //paayos
 
 const Stack = createStackNavigator();
 
@@ -54,6 +57,7 @@ const App = () => {
   }
 
   return (
+    <ContextProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute}>
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -62,9 +66,12 @@ const App = () => {
         <Stack.Screen name="FareLocation" component={FareLocation} />
         <Stack.Screen name="FareAmountForLocation" component={FareAmountForLocation} />
         <Stack.Screen name="DailyFareCollection" component={DailyFareCollection} />
+        <Stack.Screen name="TotalFareCollection" component={TotalFareCollection} />
+        <Stack.Screen name="FareDetailScreen" component={FareDetailScreen} />
         <Stack.Screen name="HistoryReceiptScreen" component={HistoryReceiptScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </ContextProvider>
   );
 };
 

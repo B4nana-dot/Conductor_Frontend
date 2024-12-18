@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
+import axiosClient from '../../axios-client';
 import styles from './ProfileScreen.styles'; // Import the styles
 
 type ProfileScreenProps = {
@@ -8,19 +8,36 @@ type ProfileScreenProps = {
 };
 
 const ProfileScreen: React.FC<ProfileScreenProps> = () => {
-  const [username, setUsername] = useState<string>('Username');
-  const [email, setEmail] = useState<string>('Email');
-  const [password, setPassword] = useState<string>(''); 
-  const [phoneNumber, setPhoneNumber] = useState<string>('+63');  
-  const [busName, setBusName] = useState<string>('No.');
+  const [userData, setUserData] = useState<any>({}); // To hold user data
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  
-  const navigation = useNavigation();
 
-  const handleSave = () => {
-    Alert.alert('Profile Updated', 'Your profile has been successfully updated.');
-    setIsEditing(false);
+  // Fetch current user data
+  const fetchUserData = async () => {
+    try {
+      const response = await axiosClient.get('/user'); // Use your API endpoint to fetch user data
+      setUserData(response.data.user); // Assuming your API returns the user in a `user` field
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
+
+  // Save updated user data
+  const handleSave = async () => {
+    try {
+      const response = await axiosClient.put('/user', { ...userData }); // Use your API endpoint to update user data
+      setUserData(response.data.user); // Update state with the returned user
+      Alert.alert('Profile Updated', 'Your profile has been successfully updated.');
+      setIsEditing(false);
+    } catch (error) {
+      Alert.alert('Error', 'There was an error updating your profile.');
+      console.error('Error saving user data:', error);
+    }
+  };
+
+  // Load user data on component mount
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -32,16 +49,16 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
       <Text style={styles.label}>Username:</Text>
       <TextInput
         style={styles.input}
-        value={username}
-        onChangeText={setUsername}
+        value={userData.username}
+        onChangeText={(text) => setUserData({ ...userData, username: text })}
         editable={isEditing}
       />
       
       <Text style={styles.label}>Email:</Text>
       <TextInput
         style={styles.input}
-        value={email}
-        onChangeText={setEmail}
+        value={userData.email}
+        onChangeText={(text) => setUserData({ ...userData, email: text })}
         editable={isEditing}
       />
 
@@ -50,8 +67,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
         style={styles.input}
         placeholder="Enter new password"
         secureTextEntry
-        value={isEditing ? password : '********'} 
-        onChangeText={setPassword}
+        value={isEditing ? userData.password : '********'} 
+        onChangeText={(text) => setUserData({ ...userData, password: text })}
         editable={isEditing}
       />
 
@@ -59,8 +76,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
       <TextInput
         style={styles.input}
         placeholder="Enter your phone number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
+        value={userData.phoneNumber}
+        onChangeText={(text) => setUserData({ ...userData, phoneNumber: text })}
         keyboardType="phone-pad"
         editable={isEditing}
       />
@@ -68,8 +85,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = () => {
       <Text style={styles.label}>Bus Name:</Text>
       <TextInput
         style={styles.input}
-        value={busName}
-        onChangeText={setBusName}
+        value={userData.busName}
+        onChangeText={(text) => setUserData({ ...userData, busName: text })}
         editable={isEditing}
       />
 

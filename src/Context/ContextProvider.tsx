@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Define the shape of the context state
 interface StateContextType {
-  currentUser: Record<string, any> | null; // Adjust based on your user object structure
+  currentUser: Record<string, any> | null;
   token: string | null;
   notification: string | null;
   setUser: (user: Record<string, any>) => void;
@@ -10,48 +10,84 @@ interface StateContextType {
   setNotification: (message: string) => void;
 }
 
-// Define the default values for the context
 const defaultContext: StateContextType = {
   currentUser: null,
   token: null,
   notification: null,
-  setUser: () => {},
-  setToken: () => {},
-  setNotification: () => {},
+  setUser: () => { },
+  setToken: () => { },
+  setNotification: () => { },
 };
 
-// Create the context with default values
 const StateContext = createContext<StateContextType>(defaultContext);
 
-// Define props for the provider component
 interface ContextProviderProps {
   children: ReactNode;
 }
 
-// Create the provider component
 export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<Record<string, any>>({});
-  const [token, _setToken] = useState<string | null>(
-    localStorage.getItem("ACCESS_TOKEN")
-  );
-  const [notification, _setNotification] = useState<string>("");
+  const [user, setUserState] = useState<Record<string, any> | null>(null);
+  const [token, setTokenState] = useState<string | null>(null);
+  const [notification, setNotificationState] = useState<string>("");
 
-  // Handle setting and removing the token
-  const setToken = (token: string | null) => {
-    _setToken(token);
-    if (token) {
-      localStorage.setItem("ACCESS_TOKEN", token);
-    } else {
-      localStorage.removeItem("ACCESS_TOKEN");
+  // Load user and token from AsyncStorage on app startup
+  useEffect(() => {
+    const loadFromStorage = async () => {
+      try {
+        const savedToken = await AsyncStorage.getItem("ACCESS_TOKEN");
+        const savedUser = await AsyncStorage.getItem("USER");
+  
+        console.log("Loaded token:", savedToken);
+        console.log("Loaded user:", savedUser);
+  
+        if (savedToken) {
+          setTokenState(savedToken);
+        }
+  
+        if (savedUser) {
+          setUserState(JSON.parse(savedUser));
+        }
+      } catch (error) {
+        console.error("Error loading data from AsyncStorage:", error);
+      }
+    };
+  
+    loadFromStorage();
+  }, []);
+  
+
+
+  const setUser = async (user: Record<string, any> | null) => {
+    try {
+      setUserState(user);
+      if (user) {
+        await AsyncStorage.setItem("USER", JSON.stringify(user));
+      } else {
+        await AsyncStorage.removeItem("USER");
+      }
+    } catch (error) {
+      console.error("Error saving user to AsyncStorage:", error);
     }
   };
 
-  // Handle setting notifications with timeout
+  const setToken = async (token: string | null) => {
+    try {
+      setTokenState(token);
+      if (token) {
+        await AsyncStorage.setItem("ACCESS_TOKEN", token);
+      } else {
+        await AsyncStorage.removeItem("ACCESS_TOKEN");
+      }
+    } catch (error) {
+      console.error("Error saving token to AsyncStorage:", error);
+    }
+  };
+
   const setNotification = (message: string) => {
-    _setNotification(message);
+    setNotificationState(message);
 
     setTimeout(() => {
-      _setNotification("");
+      setNotificationState("");
     }, 5000);
   };
 
@@ -71,5 +107,4 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
   );
 };
 
-// Custom hook to use the context
 export const useStateContext = () => useContext(StateContext);

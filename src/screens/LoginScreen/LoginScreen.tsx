@@ -9,8 +9,10 @@ import {
   Modal,
 } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useStateContext } from '../../Context/ContextProvider';
 import styles from './LoginScreen.styles';
+import axiosClient from '../../axios-client';
 
 interface LoginScreenProps {
   navigation: {
@@ -26,60 +28,37 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [resetEmail, setResetEmail] = useState<string>('');
   const { setUser, setToken } = useStateContext(); // Assuming context is used for managing user and token state
 
-  const handleLogin = () => {
-    if (email === '' || password === '') {
-      Alert.alert('Error', 'Please enter both email and password');
+  const handleLogin = async () => {
+    if (email === "" || password === "") {
+      Alert.alert("Error", "Please enter both email and password");
       return;
     }
-
+  
     const payload = { email, password };
-
-    axios
-      .post('http://10.0.2.2:8000/api/login', payload)
-      .then(({ data }) => {
-        setUser(data.user);
-        console.log(data.user);
-        setToken(data.token);
-
-        // Navigate based on role
-        const role = data.user.role; // Assuming role comes from API
-        if (role === 'conductor') {
-          Alert.alert('Login Successful', 'Welcome, Conductor!');
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'ConductorPage' }],
-          });
-        } else {
-          Alert.alert('Error', 'You are not authorized to access this app as a conductor');
-        }
-      })
-      .catch((err) => {
-        console.log('Login error:', err);  // Log the entire error object for better debugging
-      
-        const response = err.response;
-      
-        // Check if the response exists
-        if (response) {
-          if (response.status === 422) {
-            // Validation error (e.g., invalid credentials)
-            Alert.alert('Login Failed', response.data.message || 'Invalid credentials.');
-          } else if (response.status === 400) {
-            // Bad request error (e.g., missing parameters)
-            Alert.alert('Login Failed', response.data.message || 'Bad request.');
-          } else {
-            // Handle other HTTP errors
-            Alert.alert('Error', `Error: ${response.status} - ${response.data.message || 'Something went wrong.'}`);
-          }
-        } else {
-          // If there is no response, check if it's a network error or timeout
-          if (err.message && err.message.includes('Network Error')) {
-            Alert.alert('Network Error', 'Please check your internet connection and try again.');
-          } else {
-            Alert.alert('Error', 'Something went wrong. Please try again later.');
-          }
-        }
-      });
+  
+    try {
+      const { data } = await axiosClient.post("/login", payload);
+      setUser(data.user); // Save user in context and AsyncStorage
+      setToken(data.token); // Save token in context and AsyncStorage
+  
+      // Navigate based on role
+      const role = data.user.role; // Assuming role comes from API
+      if (role === "conductor") {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "ConductorPage" }],
+        });
+      } else {
+        Alert.alert(
+          "Error",
+          "You are not authorized to access this app as a conductor"
+        );
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
   };
+  
 
   const handlePasswordReset = () => {
     if (resetEmail === '') {
@@ -107,7 +86,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       <Text style={styles.label}>YOUR EMAIL</Text>
       <TextInput
         style={styles.input}
-        placeholder="yourmail@domain.com"
+        placeholder="Enter you Email"
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}

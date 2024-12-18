@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   checkbox: {
     width: 20,
     height: 20,
-    borderRadius: 4,
+    borderRadius: 50,
     borderWidth: 1,
     borderColor: '#333',
     justifyContent: 'center',
@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   checked: {
     width: 12,
     height: 12,
+    borderRadius: 50,
     backgroundColor: '#007bff',
   },
   locationText: {
@@ -53,6 +54,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loadingIndicator: {
+    flex: 1, // Ensures the indicator centers in the screen
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -6,53 +6,43 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
-  title: {
+  header: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
   },
-  routeList: {
-    flex: 1,
+  section: {
+    marginBottom: 30,
   },
-  routeContainer: {
-    backgroundColor: '#f0f8ff',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  routeName: {
-    fontSize: 18,
+  sectionHeader: {
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   fareRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
+    paddingVertical: 5,
   },
-  fareLabel: {
+  locationText: {
     fontSize: 16,
-    color: '#333',
   },
-  fareValue: {
+  amountText: {
     fontSize: 16,
-    color: '#555',
   },
-  totalLabel: {
-    fontSize: 16,
+  totalText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    marginTop: 10,
   },
-  totalValue: {
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 10,
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#007BFF',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
   },
 });
 
